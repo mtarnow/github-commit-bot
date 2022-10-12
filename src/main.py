@@ -12,6 +12,10 @@ def execute_subcommand(cmd):
     p = subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=True)
     return_code = p.wait()
     if return_code != 0:
+        for line in p.stdout:
+            print('Cmd output:')
+            print(line)
+        print(return_code)
         raise ChildProcessError("Process didn't finish successfully.", cmd)
 
 
@@ -55,15 +59,7 @@ with open(THIS_FILE_PATH, 'r+') as f:
     else:
         last_lines = line1.split('+')[1].strip().strip('\'') + line2.split('+')[1].strip().strip('\'')
 
-
-# if 'commit_string_so_far' not in locals():  # we definitely need more constants for this
-#     raise NameError("I (a program) am completely lost and have no idea what error message to give. "
-#                     "You're on your own here.")
-# 'Today I committed and committed again and committed again.'
-
-
 ll = last_lines.split('.')
-# if len(cs) > 1:
 # split the last 2 lines into the part talking about the last day commits and the remainder of the previous days part
 # (the last day commits fit into one full line - that's why we need at most 2)
 main_part, last_day_part = ll[0], ll[1]
