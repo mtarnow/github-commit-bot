@@ -75,7 +75,7 @@ else:
         if n == 0:
             main_part += ' I committed'
         else:
-            phrasing = random.randint(0, 2)
+            phrasing = random.randint(0, 3)
             match phrasing:
                 case 0:
                     main_part += ' and committed'
@@ -83,6 +83,8 @@ else:
                     main_part += ' and then committed'
                 case 2:
                     main_part += ' and committed again'
+                case 3:
+                    main_part += ' and committed after that'
         main_part += '.'
 
 
@@ -97,7 +99,7 @@ else:
 # if return_code != 0:
 #     raise ChildProcessError("Process didn't finish successfully.", cmd)
 # append today commits in 'today' format and commit each one
-n_times = random.randint(0, 3)
+n_times = random.randint(0, 5)
 if n_times == 0:
     main_part += " Today I didn't commit."
     last_lines = [main_part[i:i+LINE_LENGTH] for i in range(0, len(main_part), LINE_LENGTH)]
@@ -107,7 +109,7 @@ for n in range(n_times):
         main_part += ' Today I committed.'
         git_commit()
     else:
-        phrasing = random.randint(0, 2)
+        phrasing = random.randint(0, 3)
         match phrasing:
             case 0:
                 main_part = main_part[:-1] + ' and committed.'
@@ -117,6 +119,9 @@ for n in range(n_times):
                 git_commit()
             case 2:
                 main_part = main_part[:-1] + ' and committed again.'
+                git_commit()
+            case 3:
+                main_part = main_part[:-1] + ' and committed after that.'
                 git_commit()
 
 # append how many commits we're making today as 'the next day we commit and commit...', print the whole
