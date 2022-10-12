@@ -2,10 +2,9 @@ import os
 import random
 import subprocess
 
-# TODO: add recursive commit_string_name variables, f.ex. commit_string_name = 'commit_string',
-#  commit_string_name_name = 'commit_string_name' etc.
 commit_string = 'test.'
 n_commits = 0
+LINE_LENGTH = 100
 
 
 def execute_subcommand(cmd):
@@ -33,31 +32,33 @@ def git_commit():
 
 THIS_FILE_PATH = os.path.join(os.getcwd(), __file__)
 print(THIS_FILE_PATH)
-with open(THIS_FILE_PATH, 'r+') as f:
+with open(THIS_FILE_PATH, 'r') as f:
+    contents = f.readlines()
     # get two last lines consisting of the ending part of commit_string
     line1 = ''
     line2 = ''
-    start = None
-    for i, line in enumerate(f.readlines()):
+    commit_string_start = None
+    for i, line in enumerate(contents):
         if line.split('=')[0].strip() == 'commit_string':
-            start = i
+            commit_string_start = i
             line2 = line
-        elif start is not None:
+        elif commit_string_start is not None:
             line = line.strip()
             if line != '' and line.strip()[0] == '+':
                 line1 = line2
                 line2 = line
             else:
                 break
-    # value of commit_string is assigned only in the first line 'commit_string = ...'
-    if i == start + 1:
-        last_lines = line2.split('=')[1].strip().strip('\'')
-    # value of commit_string is assigned in the first line 'commit_string = ...' and the following line
-    elif i == start + 2:
-        last_lines = line1.split('=')[1].strip().strip('\'') + line2.split('+')[1].strip().strip('\'')
-    # last two lines assigning value to commit_string  both are of format '+ ...'
-    else:
-        last_lines = line1.split('+')[1].strip().strip('\'') + line2.split('+')[1].strip().strip('\'')
+commit_string_ended = i
+# value of commit_string is assigned only in the first line 'commit_string = ...'
+if commit_string_ended == commit_string_start + 1:
+    last_lines = line2.split('=')[1].strip().strip('\'')
+# value of commit_string is assigned in the first line 'commit_string = ...' and the following line
+elif commit_string_ended == commit_string_start + 2:
+    last_lines = line1.split('=')[1].strip().strip('\'') + line2.split('+')[1].strip().strip('\'')
+# last two lines assigning value to commit_string  both are of format '+ ...'
+else:
+    last_lines = line1.split('+')[1].strip().strip('\'') + line2.split('+')[1].strip().strip('\'')
 
 ll = last_lines.split('.')
 # split the last 2 lines into the part talking about the last day commits and the remainder of the previous days part
@@ -99,6 +100,8 @@ else:
 n_times = random.randint(0, 3)
 if n_times == 0:
     main_part += " Today I didn't commit."
+    last_lines = [main_part[i:i+LINE_LENGTH] for i in range(0, len(main_part), LINE_LENGTH)]
+    # TODO: insert lines into content
 for n in range(n_times):
     if n == 0:
         main_part += ' Today I committed.'
