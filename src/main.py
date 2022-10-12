@@ -16,5 +16,6 @@ with open(THIS_FILE_PATH, 'r+') as f:
         raise NameError("I (a program) am completely lost and have no idea what error message to give. "
                         "You're on your own here.")
     n_times = random.randint(0, 3)
+    # test
     # append how many commits we're making today as 'the next day we commit and commit...', print the whole
     # commit string, write it to this file and (figure out how) make n_times commits
