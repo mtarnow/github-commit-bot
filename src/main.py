@@ -2,10 +2,64 @@ import os
 import random
 import subprocess
 
-commit_string = 'test.'
+# TODO:
+#   1. Writing is broken and duplicates the contents.
+#   2. Split lines on spaces.
+#   3. Fix calling change_last_day_phrasing on a string without any 'commit' substrings.
+
+commit_string = 'The first day I laid in bed.'
 n_commits = 0
 THIS_FILE_PATH = os.path.join(os.getcwd(), __file__)
 LINE_LENGTH = 100
+
+
+def mock_function(fun):
+    def inner():
+        print(f'executing {fun.__name__}')
+    return inner
+
+
+def generate_file_lines(last_lines, includes_first_line):
+    lines = []
+    for i in range(0, len(last_lines), LINE_LENGTH):
+        if i == 0 and includes_first_line:
+            line = 'commit_string = \'' + last_lines[i:i+LINE_LENGTH] + '\' \\\n'
+        else:
+            line = ' '*16 + '\'' + last_lines[i:i+LINE_LENGTH] + '\' \\\n'
+        lines.append(line)
+    # remove the line continuation sign from the last line
+    lines[-1] = lines[-1][:-3] + '\n'
+    return lines
+
+
+def change_last_day_phrasing(last_lines):
+    ll = last_lines.split('.')
+    # split the last 2 lines into the part talking about the last day commits and the remainder of the previous days part
+    # (the last day commits fit into one full line - that's why we need at most 2 last lines)
+    main_part, last_day_part = ll[0], ll[1]
+    last_n_times = len(last_day_part.split('commit')) - 1  # how many commits in the last day
+
+    # change the last day commits from 'today' to 'the next day' format
+    main_part += ' and the next day'
+    if last_day_part.find("didn't") != -1:
+        main_part += " I didn't commit."
+    else:
+        for n in range(last_n_times):
+            if n == 0:
+                main_part += ' I committed'
+            else:
+                phrasing = random.randint(0, 3)
+                match phrasing:
+                    case 0:
+                        main_part += ' and committed'
+                    case 1:
+                        main_part += ' and then committed'
+                    case 2:
+                        main_part += ' and committed again'
+                    case 3:
+                        main_part += ' and committed after that'
+        main_part += '.'
+        return main_part
 
 
 def execute_subcommand(cmd):
@@ -19,12 +73,20 @@ def execute_subcommand(cmd):
         raise ChildProcessError("Process didn't finish successfully.", cmd)
 
 
+@mock_function
 def git_commit():
     try:
         cmd = ['git', 'add', 'main.py']
         execute_subcommand(cmd)
         cmd = ['git', 'commit', '-m', f'"Very important change No. {n_commits+1}"']
         execute_subcommand(cmd)
+    except ChildProcessError:
+        raise
+
+
+@mock_function
+def git_push():
+    try:
         cmd = ['git', 'push']
         execute_subcommand(cmd)
     except ChildProcessError:
@@ -61,49 +123,32 @@ def main():
     else:
         last_lines = line1.split('+')[1].strip().strip('\'') + line2.split('+')[1].strip().strip('\'')
 
-    ll = last_lines.split('.')
-    # split the last 2 lines into the part talking about the last day commits and the remainder of the previous days part
-    # (the last day commits fit into one full line - that's why we need at most 2)
-    main_part, last_day_part = ll[0], ll[1]
-    last_n_times = len(last_day_part.split('commit')) - 1  # how many commits in the last day
-
-    # change the last day commits from 'today' to 'the next day' format
-    main_part += ' and the next day'
-    if last_day_part.find("didn't") >= 0:
-        main_part += " I didn't commit."
-    else:
-        for n in range(last_n_times):
-            if n == 0:
-                main_part += ' I committed'
-            else:
-                phrasing = random.randint(0, 3)
-                match phrasing:
-                    case 0:
-                        main_part += ' and committed'
-                    case 1:
-                        main_part += ' and then committed'
-                    case 2:
-                        main_part += ' and committed again'
-                    case 3:
-                        main_part += ' and committed after that'
-            main_part += '.'
+    last_lines = change_last_day_phrasing(last_lines)
 
     # a helper function to avoid duplicating this code fragment
     def insert_into_contents_and_write(text, strip_last=False):
-        nonlocal main_part, commit_string_ended
+        nonlocal last_lines, commit_string_ended
+        print(f'before: {last_lines}')
         if strip_last:
-            main_part[:-1] += text
+            last_lines = last_lines[:-1] + text
         else:
-            main_part += text
-        lines = [main_part[i:i+LINE_LENGTH] for i in range(0, len(main_part), LINE_LENGTH)]
+            last_lines = last_lines + text
+        print(f'after: {last_lines}')
+        # entire commit_string is 1 or 2 lines long
+        includes_first_line = (commit_string_ended - commit_string_start <= 2)
+        lines = generate_file_lines(last_lines, includes_first_line)
+
+        print_contents = [s.lstrip(' ') for s in contents]
+        print(f'contents:\n{print_contents}')
         contents[commit_string_start:commit_string_ended] = lines
         f.writelines(contents)
         # if line count got bigger due to the last line exceeding LINE_LENGTH chars, we need to update this info
-        commit_string_ended += len(last_lines) - (commit_string_ended - commit_string_start)
+        commit_string_ended += len(lines) - (commit_string_ended - commit_string_start)
 
     # append today commits in 'today' format and commit each one
     with open(THIS_FILE_PATH, 'w') as f:
         n_times = random.randint(0, 5)
+        print(n_times)
         if n_times == 0:
             insert_into_contents_and_write(" Today I didn't commit.")
         for n in range(n_times):
@@ -125,6 +170,7 @@ def main():
                     case 3:
                         insert_into_contents_and_write(' and committed after that.', strip_last=True)
                         git_commit()
+            git_push()
 
 
 if __name__ == '__main__':
