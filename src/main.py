@@ -3,9 +3,8 @@ import random
 import subprocess
 
 # TODO:
-#   1. Writing is broken and duplicates the contents.
-#   2. Split lines on spaces.
-#   3. Fix calling change_last_day_phrasing on a string without any 'commit' substrings.
+#   1. Split lines on spaces.
+#   2. Fix calling change_last_day_phrasing on a string without any 'commit' substrings.
 
 commit_string = "The first day I laid in bed."
 n_commits = 0
