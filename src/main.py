@@ -3,7 +3,7 @@ import random
 import subprocess
 
 # TODO:
-#   1. Split lines on spaces.
+#   1. Fix splitting lines on spaces - cuts some letters at the start of new line on line break.
 #   2. Fix calling change_last_day_phrasing on a string without any 'commit' substrings.
 
 commit_string = "The first day I laid in bed."
@@ -20,11 +20,24 @@ def mock_function(fun):
 
 def generate_file_lines(last_lines, includes_first_line):
     lines = []
+    space_at = 0
     for i in range(0, len(last_lines), LINE_LENGTH):
-        if i == 0 and includes_first_line:
-            line = 'commit_string = "' + last_lines[i:i+LINE_LENGTH] + '" \\\n'
+        i -= space_at
+        # find the last space and break the line there
+        if i + LINE_LENGTH - 1 < len(last_lines):
+            j = i + LINE_LENGTH - 1
+            space_at = 0
+            while last_lines[j] != ' ':
+                j -= 1
+                space_at -= 1
+        # last line
         else:
-            line = ' '*16 + '"' + last_lines[i:i+LINE_LENGTH] + '" \\\n'
+            j = len(last_lines) - 1
+
+        if i == 0 and includes_first_line:
+            line = 'commit_string = "' + last_lines[i:j+1] + '" \\\n'
+        else:
+            line = ' '*16 + '"' + last_lines[i:j+1] + '" \\\n'
         lines.append(line)
     # remove the line continuation sign from the last line
     lines[-1] = lines[-1][:-3] + '\n'
@@ -124,34 +137,9 @@ def main():
                       line2.strip().strip('"'))
     # last two lines of commit_string are of format: 1) '"..." \' 2) '"..."'
     else:
-        last_lines = line1.split('+')[1].strip().strip('\'') + line2.split('+')[1].strip().strip('\'')
+        last_lines = line1.strip().rstrip('\\').strip().strip('"') + line2.strip().strip('"')
 
-    ll = last_lines.split('.')
-    # split the last 2 lines into the part talking about the last day commits and the remainder of the previous days part
-    # (the last day commits fit into one full line - that's why we need at most 2)
-    main_part, last_day_part = ll[0], ll[1]
-    last_n_times = len(last_day_part.split('commit')) - 1  # how many commits in the last day
-
-    # change the last day commits from 'today' to 'the next day' format
-    main_part += ' and the next day'
-    if last_day_part.find("didn't") >= 0:
-        main_part += " I didn't commit."
-    else:
-        for n in range(last_n_times):
-            if n == 0:
-                main_part += ' I committed'
-            else:
-                phrasing = random.randint(0, 3)
-                match phrasing:
-                    case 0:
-                        main_part += ' and committed'
-                    case 1:
-                        main_part += ' and then committed'
-                    case 2:
-                        main_part += ' and committed again'
-                    case 3:
-                        main_part += ' and committed after that'
-            main_part += '.'
+    last_lines = change_last_day_phrasing(last_lines)
 
     # a helper function to avoid duplicating this code fragment
     def insert_into_contents_and_write(text, strip_last=False):
@@ -160,37 +148,44 @@ def main():
         if strip_last:
             last_lines = last_lines[:-1] + text
         else:
-            main_part += text
-        lines = [main_part[i:i+LINE_LENGTH] for i in range(0, len(main_part), LINE_LENGTH)]
-        contents[commit_string_start:commit_string_ended] = lines
-        f.writelines(contents)
+            last_lines = last_lines + text
+        print(f'after: {last_lines}')
+        lines = generate_file_lines(last_lines, includes_first_line)
+
+        print_contents = [s.lstrip(' ') for s in contents]
+        print(f'contents:\n{print_contents}')
+        contents[last_lines_start:commit_string_ended] = lines
+        with open(THIS_FILE_PATH, 'w') as f:
+            f.writelines(contents)
         # if line count got bigger due to the last line exceeding LINE_LENGTH chars, we need to update this info
-        commit_string_ended += len(last_lines) - (commit_string_ended - commit_string_start)
+        commit_string_ended += len(lines) - (commit_string_ended - last_lines_start)
 
     # append today commits in 'today' format and commit each one
-    with open(THIS_FILE_PATH, 'w') as f:
-        n_times = random.randint(0, 5)
-        if n_times == 0:
-            insert_into_contents_and_write(" Today I didn't commit.")
-        for n in range(n_times):
-            if n == 0:
-                insert_into_contents_and_write(' Today I committed.')
-                git_commit()
-            else:
-                phrasing = random.randint(0, 3)
-                match phrasing:
-                    case 0:
-                        insert_into_contents_and_write(' and committed.', strip_last=True)
-                        git_commit()
-                    case 1:
-                        insert_into_contents_and_write(' and then committed.', strip_last=True)
-                        git_commit()
-                    case 2:
-                        insert_into_contents_and_write(' and committed again.', strip_last=True)
-                        git_commit()
-                    case 3:
-                        insert_into_contents_and_write(' and committed after that.', strip_last=True)
-                        git_commit()
+    n_times = random.randint(0, 5)
+    n_times = 4
+    print(n_times)
+    if n_times == 0:
+        insert_into_contents_and_write(" Today I didn't commit.")
+    for n in range(n_times):
+        if n == 0:
+            insert_into_contents_and_write(' Today I committed.')
+            git_commit()
+        else:
+            phrasing = random.randint(0, 3)
+            match phrasing:
+                case 0:
+                    insert_into_contents_and_write(' and committed.', strip_last=True)
+                    git_commit()
+                case 1:
+                    insert_into_contents_and_write(' and then committed.', strip_last=True)
+                    git_commit()
+                case 2:
+                    insert_into_contents_and_write(' and committed again.', strip_last=True)
+                    git_commit()
+                case 3:
+                    insert_into_contents_and_write(' and committed after that.', strip_last=True)
+                    git_commit()
+        git_push()
 
 
 if __name__ == '__main__':
