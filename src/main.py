@@ -4,6 +4,7 @@ import subprocess
 
 # TODO:
 #   1. Fix splitting lines on spaces - cuts some letters at the start of new line on line break.
+#       - generate_file_lines range nie updatuje i, który raz już sobie wziął - trzeba to rozbić na while
 #   2. Fix calling change_last_day_phrasing on a string without any 'commit' substrings.
 
 commit_string = "The first day I laid in bed."
@@ -21,8 +22,10 @@ def mock_function(fun):
 def generate_file_lines(last_lines, includes_first_line):
     lines = []
     space_at = 0
+    print(f'len: {len(last_lines)}')
     for i in range(0, len(last_lines), LINE_LENGTH):
-        i -= space_at
+        i += space_at
+        print(f"i: {i}")
         # find the last space and break the line there
         if i + LINE_LENGTH - 1 < len(last_lines):
             j = i + LINE_LENGTH - 1
