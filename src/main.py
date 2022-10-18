@@ -2,13 +2,8 @@ import os
 import random
 import subprocess
 
-# TODO:
-#   1. Fix splitting lines on spaces - cuts some letters at the start of new line on line break.
-#       - generate_file_lines range nie updatuje i, który raz już sobie wziął - trzeba to rozbić na while
-#   2. Fix calling change_last_day_phrasing on a string without any 'commit' substrings.
-
-commit_string = "The first day I laid in bed."
-n_commits = 0
+commit_string = "17.10.2022 was the first day. On that day I laid in bed."
+n_commits = 27
 THIS_FILE_PATH = os.path.join(os.getcwd(), __file__)
 LINE_LENGTH = 100
 
@@ -23,10 +18,10 @@ def generate_file_lines(last_lines, includes_first_line):
     lines = []
     space_at = 0
     print(f'len: {len(last_lines)}')
-    for i in range(0, len(last_lines), LINE_LENGTH):
+    i = 0
+    while i < len(last_lines):
         i += space_at
         print(f"i: {i}")
-        # find the last space and break the line there
         if i + LINE_LENGTH - 1 < len(last_lines):
             j = i + LINE_LENGTH - 1
             space_at = 0
@@ -36,24 +31,27 @@ def generate_file_lines(last_lines, includes_first_line):
         # last line
         else:
             j = len(last_lines) - 1
-
         if i == 0 and includes_first_line:
             line = 'commit_string = "' + last_lines[i:j+1] + '" \\\n'
         else:
             line = ' '*16 + '"' + last_lines[i:j+1] + '" \\\n'
         lines.append(line)
-    # remove the line continuation sign from the last line
+        i += LINE_LENGTH
+
     lines[-1] = lines[-1][:-3] + '\n'
     return lines
 
 
 def change_last_day_phrasing(last_lines):
-    ll = last_lines.split('.')
+    ll = last_lines.rsplit('.', 2)
     # split the last 2 lines into the part talking about the last day commits and the remainder of the previous days part
     # (the last day commits fit into one full line - that's why we need at most 2 last lines)
     main_part, last_day_part = ll[0], ll[1]
     last_n_times = len(last_day_part.split('commit')) - 1  # how many commits in the last day
-
+    print(f'main part:\n{main_part}\nlast part:\n{last_day_part}')
+    print(last_n_times)
+    if last_n_times == 0:
+        return main_part + '.' + last_day_part + '.'
     # change the last day commits from 'today' to 'the next day' format
     main_part += ' and the next day'
     if last_day_part.find("didn't") != -1:
@@ -93,7 +91,7 @@ def git_commit():
     try:
         cmd = ['git', 'add', 'main.py']
         execute_subcommand(cmd)
-        cmd = ['git', 'commit', '-m', f'"Very important change No. {n_commits+1}"']
+        cmd = ['git', 'commit', '-m', f'"Very important change No. {n_commits}"']
         execute_subcommand(cmd)
     except ChildProcessError:
         raise
@@ -144,7 +142,7 @@ def main():
 
     last_lines = change_last_day_phrasing(last_lines)
 
-    # a helper function to avoid duplicating this code fragment
+    # helper functions to avoid duplicating the code fragments
     def insert_into_contents_and_write(text, strip_last=False):
         nonlocal last_lines, commit_string_ended
         print(f'before: {last_lines}')
@@ -160,10 +158,27 @@ def main():
         contents[last_lines_start:commit_string_ended] = lines
         with open(THIS_FILE_PATH, 'w') as f:
             f.writelines(contents)
-        # if line count got bigger due to the last line exceeding LINE_LENGTH chars, we need to update this info
+        # if line count got bigger due to the len of last line exceeding LINE_LENGTH, we need to update this info
         commit_string_ended += len(lines) - (commit_string_ended - last_lines_start)
 
-    # append today commits in 'today' format and commit each one
+    def commit():
+        nonlocal commit_string_ended
+        commit_count_line = contents[commit_string_ended]
+        print(f'ccl: {commit_count_line}')
+        ccl = commit_count_line.split('=')
+        new_count = int(ccl[1].strip()) + 1
+        ccl[1] = f' {new_count}\n'
+        commit_count_line = '='.join(ccl)
+        print(f'ccl: {commit_count_line}')
+        print(type(commit_count_line))
+        contents[commit_string_ended:commit_string_ended+1] = [commit_count_line]
+        print('contents:')
+        print(contents[commit_string_ended:commit_string_ended+1])
+        with open(THIS_FILE_PATH, 'w') as f:
+            f.writelines(contents)
+        git_commit()
+
+    # append today commits in 'Today I ... and ...' format to the commit_string and commit each change
     n_times = random.randint(0, 5)
     n_times = 4
     print(n_times)
@@ -172,23 +187,23 @@ def main():
     for n in range(n_times):
         if n == 0:
             insert_into_contents_and_write(' Today I committed.')
-            git_commit()
+            commit()
         else:
             phrasing = random.randint(0, 3)
             match phrasing:
                 case 0:
                     insert_into_contents_and_write(' and committed.', strip_last=True)
-                    git_commit()
+                    commit()
                 case 1:
                     insert_into_contents_and_write(' and then committed.', strip_last=True)
-                    git_commit()
+                    commit()
                 case 2:
                     insert_into_contents_and_write(' and committed again.', strip_last=True)
-                    git_commit()
+                    commit()
                 case 3:
                     insert_into_contents_and_write(' and committed after that.', strip_last=True)
-                    git_commit()
-        git_push()
+                    commit()
+    git_push()
 
 
 if __name__ == '__main__':
