@@ -2,8 +2,9 @@ import os
 import random
 import subprocess
 
-commit_string = "17.10.2022 was the first day. On that day I laid in bed."
-n_commits = 27
+commit_string = "19.10.2022 was the first day. On that day I laid in bed and the next day I committed and the next " \
+                "day I committed. Today I committed."
+n_commits = 3
 THIS_FILE_PATH = os.path.join(os.getcwd(), __file__)
 LINE_LENGTH = 100
 
@@ -86,7 +87,7 @@ def execute_subcommand(cmd):
         raise ChildProcessError("Process didn't finish successfully.", cmd)
 
 
-@mock_function
+#@mock_function
 def git_commit():
     try:
         cmd = ['git', 'add', 'main.py']
@@ -97,7 +98,7 @@ def git_commit():
         raise
 
 
-@mock_function
+#@mock_function
 def git_push():
     try:
         cmd = ['git', 'push']
@@ -180,7 +181,7 @@ def main():
 
     # append today commits in 'Today I ... and ...' format to the commit_string and commit each change
     n_times = random.randint(0, 5)
-    n_times = 4
+    #n_times = 4
     print(n_times)
     if n_times == 0:
         insert_into_contents_and_write(" Today I didn't commit.")
@@ -204,6 +205,15 @@ def main():
                     insert_into_contents_and_write(' and committed after that.', strip_last=True)
                     commit()
     git_push()
+    commit_string_lines = contents[commit_string_start:commit_string_ended]
+    print(commit_string_lines)
+    commit_string = ''
+    for i, line in enumerate(commit_string_lines):
+        if i == 0:
+            commit_string += line.split('=')[1].strip().rstrip('\\').strip().strip('"')
+        else:
+            commit_string += line.strip().rstrip('\\').strip().strip('"')
+    print(commit_string)
 
 
 if __name__ == '__main__':
