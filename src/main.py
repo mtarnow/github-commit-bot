@@ -3,8 +3,8 @@ import random
 import subprocess
 
 commit_string = "19.10.2022 was the first day. On that day I laid in bed and the next day I didn't commit. Today I " \
-                "committed and then committed and committed."
-n_commits = 3
+                "committed."
+n_commits = 1
 THIS_FILE_PATH = os.path.join(os.getcwd(), __file__)
 LINE_LENGTH = 100
 
@@ -154,8 +154,8 @@ def main():
         print(f'after: {last_lines}')
         lines = generate_file_lines(last_lines, includes_first_line)
 
-        print_contents = [s.lstrip(' ') for s in contents]
-        print(f'contents:\n{print_contents}')
+        #print_contents = [s.lstrip(' ') for s in contents]
+        #print(f'contents:\n{print_contents}')
         contents[last_lines_start:commit_string_ended] = lines
         with open(THIS_FILE_PATH, 'w') as f:
             f.writelines(contents)
@@ -163,15 +163,20 @@ def main():
         commit_string_ended += len(lines) - (commit_string_ended - last_lines_start)
 
     def commit():
+        global n_commits
         nonlocal commit_string_ended
-        commit_count_line = contents[commit_string_ended]
-        print(f'ccl: {commit_count_line}')
-        ccl = commit_count_line.split('=')
-        new_count = int(ccl[1].strip()) + 1
-        ccl[1] = f' {new_count}\n'
-        commit_count_line = '='.join(ccl)
-        print(f'ccl: {commit_count_line}')
-        print(type(commit_count_line))
+        # commit_count_line = contents[commit_string_ended]
+        # print(f'ccl: {commit_count_line}')
+        # ccl = commit_count_line.split('=')
+        # new_count = int(ccl[1].strip()) + 1
+        n_commits += 1
+        commit_count_line = f'n_commits = {n_commits}\n'
+
+
+        # ccl[1] = f' {new_count}\n'
+        # commit_count_line = '='.join(ccl)
+        # print(f'ccl: {commit_count_line}')
+        # print(type(commit_count_line))
         contents[commit_string_ended:commit_string_ended+1] = [commit_count_line]
         print('contents:')
         print(contents[commit_string_ended:commit_string_ended+1])
