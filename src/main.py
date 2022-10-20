@@ -2,8 +2,8 @@ import os
 import random
 import subprocess
 
-commit_string = "I like apples.. Today I committed and committed again and committed and committed after that."
-n_commits = 7
+commit_string = "I like apples.. Today I committed."
+n_commits = 8
 THIS_FILE_PATH = os.path.join(os.getcwd(), __file__)
 LINE_LENGTH = 100
 
@@ -42,6 +42,7 @@ def generate_file_lines(last_lines, includes_first_line):
 
 def change_last_day_phrasing(last_lines):
     ll = last_lines.rsplit('.', 2)
+    print(ll)
     # split the last 2 lines into the part talking about the last day commits and the remainder of the previous days part
     # (the last day commits fit into one full line - that's why we need at most 2 last lines)
     main_part, last_day_part = ll[0], ll[1]
