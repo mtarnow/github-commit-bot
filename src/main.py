@@ -2,9 +2,10 @@ import os
 import random
 import subprocess
 
-commit_string = "19.10.2022 was the first day. On that day I laid in bed and the next day I committed. Today I " \
-                "committed and committed after that and committed and committed again."
-n_commits = 5
+commit_string = "19.10.2022 was the first day. On that day I laid in bed and the next day I committed and the next " \
+                "day I committed and committed after that and committed after that and then committed. Today I " \
+                "committed."
+n_commits = 6
 THIS_FILE_PATH = os.path.join(os.getcwd(), __file__)
 LINE_LENGTH = 100
 
@@ -88,7 +89,7 @@ def git_commit():
     try:
         cmd = ['git', 'add', THIS_FILE_PATH]
         execute_subcommand(cmd)
-        cmd = ['git', 'commit', '-m', f'"Very important change No. {n_commits}"']
+        cmd = ['git', 'commit', '-m', f'Very important change No. {n_commits}']
         execute_subcommand(cmd)
     except ChildProcessError:
         raise
