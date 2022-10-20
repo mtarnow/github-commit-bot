@@ -2,10 +2,8 @@ import os
 import random
 import subprocess
 
-commit_string = "19.10.2022 was the first day. On that day I laid in bed and the next day I committed and the next " \
-                "day I committed and committed after that and committed after that and then committed. Today I " \
-                "committed and committed and then committed and committed and committed after that."
-n_commits = 10
+commit_string = "19.10.2022 was the first day. On that day I laid in bed. Today I committed."
+n_commits = 1
 THIS_FILE_PATH = os.path.join(os.getcwd(), __file__)
 LINE_LENGTH = 100
 
@@ -77,14 +75,14 @@ def execute_subcommand(cmd):
     p = subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=True)
     return_code = p.wait()
     if return_code != 0:
-        for line in p.stdout:
-            print('Cmd output:')
+        for i, line in enumerate(p.stdout):
+            if i == 0:
+                print('Cmd output:')
             print(line)
-        print(return_code)
+        print(f'Return code: {return_code}')
         raise ChildProcessError("Process didn't finish successfully.", cmd)
 
 
-#@mock_function
 def git_commit():
     try:
         cmd = ['git', 'add', THIS_FILE_PATH]
@@ -95,7 +93,6 @@ def git_commit():
         raise
 
 
-#@mock_function
 def git_push():
     try:
         cmd = ['git', 'push']
@@ -105,7 +102,6 @@ def git_push():
 
 
 def main():
-    print(THIS_FILE_PATH)
     with open(THIS_FILE_PATH, 'r') as f:
         contents = f.readlines()
         # get two last lines consisting of the ending part of commit_string
