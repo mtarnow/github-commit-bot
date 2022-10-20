@@ -2,13 +2,8 @@ import os
 import random
 import subprocess
 
-commit_string = "19.10.2022 was the first day. On that day I laid in bed and the next day I didn't commit and the " \
-                "next day I committed and committed and committed again and committed again and then committed and " \
-                "the next day I committed and committed after that and then committed and committed after that and " \
-                "the next day I committed and committed after that and the next day I didn't commit and the next day " \
-                "I committed and committed again and then committed and committed and the next day I committed. " \
-                "Today I committed and committed and then committed and committed again and committed after that."
-n_commits = 21
+commit_string = "19.10.2022 was the first day. On that day I laid in bed. Today I committed."
+n_commits = 1
 THIS_FILE_PATH = os.path.join(os.getcwd(), __file__)
 LINE_LENGTH = 100
 
@@ -186,7 +181,7 @@ def main():
                     insert_into_contents_and_write(' and committed again.', strip_last=True)
                 case 3:
                     insert_into_contents_and_write(' and committed after that.', strip_last=True)
-        print(f'Executing commit No. {n_times+1}...')
+        print(f'Executing commit No. {n+1}...')
         commit()
     print(f'Pushing...')
     git_push()
@@ -198,7 +193,7 @@ def main():
             commit_string += line.split('=')[1].strip().rstrip('\\').strip().strip('"')
         else:
             commit_string += line.strip().rstrip('\\').strip().strip('"')
-    print(commit_string)
+    print('\n' + commit_string)
     print('\nPress Enter key to exit...')
     input()
 
