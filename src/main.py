@@ -6,8 +6,9 @@ commit_string = "19.10.2022 was the first day. On that day I laid in bed and the
                 "next day I committed and committed and committed again and committed again and then committed and " \
                 "the next day I committed and committed after that and then committed and committed after that and " \
                 "the next day I committed and committed after that and the next day I didn't commit and the next day " \
-                "I committed and committed again and then committed and committed. Today I committed."
-n_commits = 16
+                "I committed and committed again and then committed and committed and the next day I committed. " \
+                "Today I committed."
+n_commits = 17
 THIS_FILE_PATH = os.path.join(os.getcwd(), __file__)
 LINE_LENGTH = 100
 
@@ -21,11 +22,9 @@ def mock_function(fun):
 def generate_file_lines(last_lines, includes_first_line):
     lines = []
     space_at = 0
-    print(f'len: {len(last_lines)}')
     i = 0
     while i < len(last_lines):
         i += space_at
-        print(f"i: {i}")
         if i + LINE_LENGTH - 1 < len(last_lines):
             j = i + LINE_LENGTH - 1
             space_at = 0
@@ -52,8 +51,6 @@ def change_last_day_phrasing(last_lines):
     # (the last day commits fit into one full line - that's why we need at most 2 last lines)
     main_part, last_day_part = ll[0], ll[1]
     last_n_times = len(last_day_part.split('commit')) - 1  # how many commits in the last day
-    print(f'main part:\n{main_part}\nlast part:\n{last_day_part}')
-    print(last_n_times)
     if last_n_times == 0:
         return main_part + '.' + last_day_part + '.'
     # change the last day commits from 'today' to 'the next day' format
@@ -149,16 +146,11 @@ def main():
     # helper functions to avoid duplicating the code fragments
     def insert_into_contents_and_write(text, strip_last=False):
         nonlocal last_lines, commit_string_ended
-        print(f'before: {last_lines}')
         if strip_last:
             last_lines = last_lines[:-1] + text
         else:
             last_lines = last_lines + text
-        print(f'after: {last_lines}')
         lines = generate_file_lines(last_lines, includes_first_line)
-
-        #print_contents = [s.lstrip(' ') for s in contents]
-        #print(f'contents:\n{print_contents}')
         contents[last_lines_start:commit_string_ended] = lines
         with open(THIS_FILE_PATH, 'w') as f:
             f.writelines(contents)
@@ -168,53 +160,38 @@ def main():
     def commit():
         global n_commits
         nonlocal commit_string_ended
-        # commit_count_line = contents[commit_string_ended]
-        # print(f'ccl: {commit_count_line}')
-        # ccl = commit_count_line.split('=')
-        # new_count = int(ccl[1].strip()) + 1
         n_commits += 1
         commit_count_line = f'n_commits = {n_commits}\n'
-
-
-        # ccl[1] = f' {new_count}\n'
-        # commit_count_line = '='.join(ccl)
-        # print(f'ccl: {commit_count_line}')
-        # print(type(commit_count_line))
         contents[commit_string_ended:commit_string_ended+1] = [commit_count_line]
-        print('contents:')
-        print(contents[commit_string_ended:commit_string_ended+1])
         with open(THIS_FILE_PATH, 'w') as f:
             f.writelines(contents)
         git_commit()
 
     # append today commits in 'Today I ... and ...' format to the commit_string and commit each change
     n_times = random.randint(0, 5)
-    #n_times = 4
-    print(n_times)
+    print(f"Today I'm gonna commit {n_times} times.")
     if n_times == 0:
         insert_into_contents_and_write(" Today I didn't commit.")
     for n in range(n_times):
         if n == 0:
             insert_into_contents_and_write(' Today I committed.')
-            commit()
         else:
             phrasing = random.randint(0, 3)
             match phrasing:
                 case 0:
                     insert_into_contents_and_write(' and committed.', strip_last=True)
-                    commit()
                 case 1:
                     insert_into_contents_and_write(' and then committed.', strip_last=True)
-                    commit()
                 case 2:
                     insert_into_contents_and_write(' and committed again.', strip_last=True)
-                    commit()
                 case 3:
                     insert_into_contents_and_write(' and committed after that.', strip_last=True)
-                    commit()
+        print(f'Executing commit No. {n_times+1}...')
+        commit()
+    print(f'Pushing...')
     git_push()
+    print('Done.')
     commit_string_lines = contents[commit_string_start:commit_string_ended]
-    print(commit_string_lines)
     commit_string = ''
     for i, line in enumerate(commit_string_lines):
         if i == 0:
