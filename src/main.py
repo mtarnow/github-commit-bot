@@ -4,8 +4,8 @@ import subprocess
 
 commit_string = "19.10.2022 was the first day. On that day I laid in bed and the next day I committed and committed " \
                 "and then committed and committed after that and committed again. Today I committed and committed " \
-                "after that."
-n_commits = 7
+                "after that and committed again."
+n_commits = 8
 THIS_FILE_PATH = os.path.join(os.getcwd(), __file__)
 LINE_LENGTH = 100
 
