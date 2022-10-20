@@ -2,8 +2,8 @@ import os
 import random
 import subprocess
 
-commit_string = "I like apples. I like pears. Today I committed."
-n_commits = 11
+commit_string = "I like apples. I like pears and the next day I committed. Today I committed."
+n_commits = 12
 THIS_FILE_PATH = os.path.join(os.getcwd(), __file__)
 LINE_LENGTH = 100
 
