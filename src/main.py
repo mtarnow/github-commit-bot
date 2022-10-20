@@ -93,7 +93,7 @@ def git_commit():
     try:
         cmd = ['git', 'add', THIS_FILE_PATH]
         execute_subcommand(cmd)
-        cmd = ['git', 'commit', '-m', f'Very important change No. {n_commits}']
+        cmd = ['git', 'commit', '-m', f'Make a very important change No. {n_commits}']
         execute_subcommand(cmd)
     except ChildProcessError:
         raise
