@@ -13,7 +13,7 @@ To recruit Albert and have him work for you too:
    to enclose that string - this will be a seed for a never-ending sentence that's going to grow with each commit.
    For the second sentence to make sense, write it from Albert's perspective in such form, that it would make
    sense to extend it with '... and the next day I committed'. As an example, the second sentence could describe what
-   Albert did yesterday.
+   Albert did the previous day.
 
    Example of the seeding string: "I started to work here on 22.10.2022. Yesterday I was at a farmers' market buying
    carrots."
