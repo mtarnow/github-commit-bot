@@ -10,9 +10,13 @@ To recruit Albert and have him work for you too:
 2. Clone this repository.
 3. Set remote to the url of your new empty repository ('cd github-commit-bot', 'git remote set-url origin [url]')
 4. In src/main.py edit the commit_string variable to contain 2 sentences ending with a period. Use double quotes 
-   to enclose that string. You could provide a start date and the second sentence in such form, that it would make
-   sense to extend it with '... and the next day I committed' - for example describing what Albert did yesterday.
-   For example: "I started to work here on 22.10.2022. Yesterday I was at a farmers' market."
+   to enclose that string - this will be a seed for a never-ending sentence that's going to grow with each commit.
+   For the second sentence to make sense, write it from Albert's perspective in such form, that it would make
+   sense to extend it with '... and the next day I committed'. As an example, the second sentence could describe what
+   Albert did yesterday.
+
+   Example of the seeding string: "I started to work here on 22.10.2022. Yesterday I was at a farmers' market buying
+   carrots."
 5. Set the n_commits variable to 0.
 
 That's it. You can run the script with '[Python >=3.10 executable] [main.py file path]',
