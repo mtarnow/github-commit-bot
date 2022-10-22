@@ -2,9 +2,9 @@
 This is Albert. Albert is a self-conscious bot tracking his commits and committing his updated knowledge.
 The work he's doing is essential.
 
-The whole program is intentionally contained in one file. It will keep growing indefinitely - that's by design.
+The whole script is intentionally contained in one file. It will keep growing indefinitely - that's by design.
 
-The program depends on Python 3.10 or higher.
+The script depends on Python 3.10 or higher and assumes you have your git identity already set up.
 To recruit Albert and have him work for you too:
 1. Create an empty GitHub repository.
 2. Clone this repository.
