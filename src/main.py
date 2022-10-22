@@ -79,7 +79,7 @@ def change_last_day_phrasing(last_lines):
 
 
 def execute_subcommand(cmd):
-    p = subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=True)
+    p = subprocess.Popen(cmd, stdout=subprocess.PIPE)
     return_code = p.wait()
     if return_code != 0:
         for i, line in enumerate(p.stdout):
