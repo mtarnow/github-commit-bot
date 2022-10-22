@@ -15,7 +15,7 @@ To recruit Albert and have him work for you too:
    sense to extend it with '... and the next day I committed'. As an example, the second sentence could describe what
    Albert did the previous day.
 
-   Example of the seeding string: "I started to work here on 22.10.2022. Yesterday I was at a farmers' market buying
+   Example seeding string: "I started to work here on 22.10.2022. Yesterday I was at a farmers' market buying
    carrots."
 5. Set the n_commits variable to 0.
 
