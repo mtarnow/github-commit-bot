@@ -4,7 +4,7 @@ The work he's doing is essential.
 
 The whole program is intentionally contained in one file. It will keep growing indefinitely - that's by design.
 
-To recruit Albert and have him work for you too you need to have Python3.10 installed. Next:
+To recruit Albert and have him work for you too you need to have Python 3.10 installed. Next:
 1. Clone this repository.
 2. Edit the commit_string variable to contain 2 sentences ending with a period. Ideally you'd provide a start date
    and the second sentence in such form, that it would make sense to extend it with '... and the next day I committed'.
