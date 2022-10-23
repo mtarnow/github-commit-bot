@@ -13,10 +13,10 @@ To recruit Albert and have him work for you too:
    to enclose that string - this will be a seed for a never-ending sentence that's going to grow with each commit.
    For the second sentence to make sense, write it from Albert's perspective in such form, that it would make
    sense to extend it with '... and the next day I committed'. As an example, the second sentence could describe what
-   Albert did the previous day.
+   Albert did on the first day. 
 
-   Example seeding string: "I started to work here on 22.10.2022. Yesterday I was at a farmers' market buying
-   carrots."
+   Example seeding string: "I started to work here on 22.10.2022. On that day I was sent to the farmers' market to
+   buy some carrots."
 5. Set the n_commits variable to 0.
 
 That's it. You can run the script with '[Python >=3.10 executable] [main.py file path]',

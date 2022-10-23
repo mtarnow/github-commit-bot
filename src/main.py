@@ -5,12 +5,8 @@ import subprocess
 # TODO:
 #   - test on a different machine
 
-commit_string = "I like apples. I like pears and the next day I committed and the next day I committed and committed " \
-                "again and committed again and the next day I committed and the next day I committed and the next " \
-                "day I didn't commit and the next day I committed and committed again and then committed and the " \
-                "next day I committed. Today I committed and committed again and committed and then committed and " \
-                "then committed."
-n_commits = 25
+commit_string = "I started to work here on 23.10.2022. On that day I had to clean up the development mess."
+n_commits = 0
 THIS_FILE_PATH = os.path.join(os.getcwd(), __file__)
 LINE_LENGTH = 100
 
@@ -49,7 +45,6 @@ def generate_file_lines(last_lines, includes_first_line):
 
 def change_last_day_phrasing(last_lines):
     ll = last_lines.rsplit('.', 2)
-    print(ll)
     # split the last 2 lines into the part talking about the last day commits and the remainder of the previous days part
     # (the last day commits fit into one full line - that's why we need at most 2 last lines)
     main_part, last_day_part = ll[0], ll[1]
@@ -200,7 +195,7 @@ def main():
         else:
             commit_string += line.strip().rstrip('\\').strip().strip('"')
     print('\n' + commit_string)
-    print('\nPress Enter key to exit...')
+    print('\nPress Enter to exit...')
     input()
 
 
