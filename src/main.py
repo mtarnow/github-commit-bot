@@ -8,8 +8,8 @@ import subprocess
 commit_string = "I like apples. I like pears and the next day I committed and the next day I committed and committed " \
                 "again and committed again and the next day I committed and the next day I committed and the next " \
                 "day I didn't commit and the next day I committed and committed again and then committed and the " \
-                "next day I committed. Today I committed and committed again and committed."
-n_commits = 23
+                "next day I committed. Today I committed and committed again and committed and then committed."
+n_commits = 24
 THIS_FILE_PATH = os.path.join(os.getcwd(), __file__)
 LINE_LENGTH = 100
 
