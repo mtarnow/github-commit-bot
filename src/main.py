@@ -2,7 +2,7 @@ import os
 import random
 import subprocess
 
-commit_string = "I started to work here on 25.10.2022. On that day I had to clean up the development mess."
+commit_string = "I started to work here on 26.10.2022. On that day I had to clean up the development mess."
 n_commits = 0
 THIS_FILE_PATH = os.path.join(os.getcwd(), __file__)
 LINE_LENGTH = 100
@@ -166,25 +166,26 @@ def main():
     print(f"Today I'm gonna commit {n_times} times.")
     if n_times == 0:
         insert_into_contents_and_write(" Today I didn't commit.")
-    for n in range(n_times):
-        if n == 0:
-            insert_into_contents_and_write(' Today I committed.')
-        else:
-            phrasing = random.randint(0, 3)
-            match phrasing:
-                case 0:
-                    insert_into_contents_and_write(' and committed.', strip_last=True)
-                case 1:
-                    insert_into_contents_and_write(' and then committed.', strip_last=True)
-                case 2:
-                    insert_into_contents_and_write(' and committed again.', strip_last=True)
-                case 3:
-                    insert_into_contents_and_write(' and committed after that.', strip_last=True)
-        print(f'Executing commit No. {n+1}...')
-        commit()
-    print(f'Pushing...')
-    git_push()
-    print('Done.')
+    else:
+        for n in range(n_times):
+            if n == 0:
+                insert_into_contents_and_write(' Today I committed.')
+            else:
+                phrasing = random.randint(0, 3)
+                match phrasing:
+                    case 0:
+                        insert_into_contents_and_write(' and committed.', strip_last=True)
+                    case 1:
+                        insert_into_contents_and_write(' and then committed.', strip_last=True)
+                    case 2:
+                        insert_into_contents_and_write(' and committed again.', strip_last=True)
+                    case 3:
+                        insert_into_contents_and_write(' and committed after that.', strip_last=True)
+            print(f'Executing commit No. {n+1}...')
+            commit()
+        print(f'Pushing...')
+        git_push()
+        print('Done.')
     commit_string_lines = contents[commit_string_start:commit_string_ended]
     commit_string = ''
     for i, line in enumerate(commit_string_lines):
