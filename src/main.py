@@ -2,8 +2,9 @@ import os
 import random
 import subprocess
 
-commit_string = "I started to work here on 26.10.2022. On that day I had to clean up the development mess."
-n_commits = 0
+commit_string = "I started to work here on 26.10.2022. On that day I had to clean up the development mess. Today I " \
+                "committed."
+n_commits = 1
 THIS_FILE_PATH = os.path.join(os.getcwd(), __file__)
 LINE_LENGTH = 100
 
