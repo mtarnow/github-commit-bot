@@ -144,9 +144,9 @@ commit_string = "I started to work here on 26.10.2022. On that day I had to clea
                 "after that and committed and committed again and committed again and the next day I committed and " \
                 "committed after that and committed again and then committed and the next day I committed and " \
                 "committed after that and then committed and the next day I committed and committed again and the " \
-                "next day I committed and the next day I didn't commit and the next day I committed. Today I " \
-                "committed and then committed."
-n_commits = 540
+                "next day I committed and the next day I didn't commit and the next day I committed and the next day " \
+                "I committed and committed again. Today I committed."
+n_commits = 541
 THIS_FILE_PATH = os.path.join(os.getcwd(), __file__)
 LINE_LENGTH = 100
 
